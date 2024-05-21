@@ -33,7 +33,7 @@ reticulate::source_python("ratings_scraper.py")
     # - year: Season desired, a string with format "23/24"
 
   # Outputs:
-    # player_rating: 
+    # player_rating: Dictionary of teams and players, containing data.frames of the ratings of each of the players
 
 ###############################################################
 league_matches <- league_matches("La Liga", "23/24")
