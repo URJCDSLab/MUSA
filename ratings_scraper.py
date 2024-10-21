@@ -17,33 +17,32 @@ import traceback
 from Sofascore import Sofascore
 
 ####################################################################################
-def league_matches(league_name="La Liga", year='23/24', scraper = Sofascore()):
+def league_matches(league_name="La Liga", year='23/24', league_id='8', season_id='52376', scraper = Sofascore()):
     
     sofascore = scraper
     
     # Scrape team IDs based on the league name
-    league_matches = sofascore.scrape_league_matches(year=year, league=league_name)
+    league_matches = sofascore.scrape_league_matches(year=year, league=league_name, league_id=league_id, season_id=season_id)
     return league_matches
     
-def read_league_table(league_name="La Liga", year='23/24', scraper = Sofascore()):
+def read_league_table(league_name="La Liga", year='23/24', league_id='8', season_id='52376', scraper = Sofascore()):
     
     sofascore = scraper
     
     # Scrape team IDs based on the league name
-    league_table = sofascore.read_league_table(year=year, league=league_name)
+    league_table = sofascore.read_league_table(year=year, league=league_name, league_id=league_id, season_id=season_id)
     return league_table
     
 
-
-def scrape_ratings(league_name="La Liga", year='23/24', scraper=Sofascore()):
+def scrape_ratings(league_name="La Liga", year='23/24', league_id='8', season_id='52376', scraper = Sofascore()):
 
     sofascore = scraper
 
     # Scrape team IDs based on the league name
-    league_matches = sofascore.scrape_league_matches(year=year, league=league_name)
+    league_matches = sofascore.scrape_league_matches(year=year, league=league_name, league_id=league_id, season_id=season_id)
 
     # Scrape the table up to today
-    league_table = sofascore.read_league_table(year=year, league=league_name)
+    league_table = sofascore.read_league_table(year=year, league=league_name, league_id=league_id, season_id=season_id)
 
     data = {}  
 
@@ -90,7 +89,3 @@ def scrape_ratings(league_name="La Liga", year='23/24', scraper=Sofascore()):
             data[team][player] = data[team][player].sort_values(by='date').reset_index(drop=True)
 
     return data
-
-
-
-

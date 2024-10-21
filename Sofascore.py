@@ -1,7 +1,7 @@
 import requests
 import json
 import pandas as pd
-from ScraperFC.shared_functions import get_source_comp_info
+#from ScraperFC.shared_functions import get_source_comp_info
 import datetime
 import numpy as np
 import pandas as pd
@@ -152,7 +152,7 @@ class Sofascore:
         return home_team, away_team
     
     ############################################################################
-    def read_league_table(self, year, league) -> pd.DataFrame:
+    def read_league_table(self, year, league, league_id, season_id) -> pd.DataFrame:
         """Retrieve the league table for the selected leagues.
 
         Parameters
@@ -165,16 +165,8 @@ class Sofascore:
         -------
         pd.DataFrame
         """
-        source_comp_info = get_source_comp_info(year, league, "Sofascore")
-        
-        league_id = source_comp_info['Sofascore'][league]['id']
-        season_id = source_comp_info['Sofascore'][league]['seasons'][year]
-        
-        
-
         request_url = 'https://api.sofascore.com/api/v1' +\
-            f"/unique-tournament/{league_id}/season/{season_id}/standings/total"
-
+            f"/unique-tournament/{league_id}/season/{season_id}/standings/total"           
         idx = ['league', 'season']
         cols = ['team', 'MP', 'W', 'D', 'L', 'GF', 'GA', 'GD', 'Pts']
 
@@ -207,7 +199,7 @@ class Sofascore:
     
     ############################################################################
     def scrape_league_stats(
-        self, year, league, accumulation='total', 
+        self, season_id, league_id, accumulation='total', 
         selected_positions=['Goalkeepers', 'Defenders', 'Midfielders', 'Forwards']
     ):
         """ Get every player statistic that can be asked in league pages on 
@@ -226,17 +218,14 @@ class Sofascore:
             DataFrame: DataFrame with each row corresponding to a player and 
                 the columns are the fields defined on get_league_stats_fields()
         """
-        source_comp_info = get_source_comp_info(year, league, "Sofascore")
-        
+
         positions = self.get_positions(selected_positions)
-        league_id = source_comp_info['Sofascore'][league]['id']
-        season_id = source_comp_info['Sofascore'][league]['seasons'][year]
 
         offset = 0
         df = pd.DataFrame()
         for i in range(0,100):
             request_url = f'https://api.sofascore.com/api/v1' +\
-                f'/unique-tournament/{league_id}/season/{season_id}/statistics'+\
+                f'/unique-tournament/{'8'}/season/{'42409'}/statistics'+\
                 f'?limit=100&order=-rating&offset={offset}'+\
                 f'&accumulation={accumulation}' +\
                 f'&fields={self.concatenated_fields}'+\
@@ -254,7 +243,7 @@ class Sofascore:
         
         return df
     ############################################################################
-    def scrape_league_matches(self, year, league):
+    def scrape_league_matches(self, year, league, league_id, season_id):
         """ Get all match IDs for the chosen league on SofaScore.
     
         Args:
@@ -264,11 +253,6 @@ class Sofascore:
         Returns:
             list: List of all match IDs for the league
         """
-        source_comp_info = get_source_comp_info(year, league, "Sofascore")
-        
-        league_id = source_comp_info['Sofascore'][league]['id']
-        season_id = source_comp_info['Sofascore'][league]['seasons'][year]
-    
         match_ids = []
         offset = 0
         for i in range(0, 10):
@@ -385,9 +369,7 @@ class Sofascore:
         home_name, away_name = self.get_team_names(match_id)
         
         response = requests.get(
-            f'https://api.sofascore.com/api/v1/event/{match_id}/lineups', 
-            headers=self.requests_headers
-        )
+            f'https://api.sofascore.com/api/v1/event/{match_id}/lineups')
         
         names = {'home': home_name, 'away': away_name}
         dataframes = {}
